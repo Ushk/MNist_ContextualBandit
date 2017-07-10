@@ -7,6 +7,7 @@ from NumBandit import NumBandit
 
 # Global Variables
 e = 0.1 # % of time to explore
+batch_size = 100 # Obvious what this is
 
 
 def load_shuffled_digits():
@@ -82,8 +83,8 @@ train_batch = dict()
 for digit in possible_digits:
     train_batch[digit] = {'ims': [], 'rews': []}
 
-batch_size = 100 # Obvious
-loss = [] # Where we track our loss
+
+regret = [] # Where we track our loss
 
 for index, image in enumerate(digits):
 
@@ -93,14 +94,14 @@ for index, image in enumerate(digits):
 
     train_batch[action]['ims'].append(image)
     train_batch[action]['rews'].append(float(action == target[index]))
-    loss.append(1.0 - float(action == target[index]))
+    regret.append(1.0 - float(action == target[index]))
 
     if (index % batch_size == 0) & (index != 0):
         update_weights(train_batch, all_bandits)
 
 
 xax = range(len(digits))
-yax = np.cumsum(loss)
+yax = np.cumsum(regret)
 plt.plot(xax, yax)
 plt.show()
 
